@@ -1,7 +1,7 @@
 ../Drivers/SbW_Protocol/SbW_Protocol.c:12:17:CRC16	2
 ../Drivers/SbW_Protocol/SbW_Protocol.c:20:6:SbW_Init	1
 ../Drivers/SbW_Protocol/SbW_Protocol.c:26:6:SbW_Request_Received_CB	12
-../Drivers/SbW_Protocol/SbW_Protocol.c:103:6:SbW_Reply_Transmit	1
-../Drivers/SbW_Protocol/SbW_Protocol.c:107:6:SbW_Timer_Callback	1
-../Drivers/SbW_Protocol/SbW_Protocol.c:115:6:SbW_TxFrame_processor	4
-../Drivers/SbW_Protocol/SbW_Protocol.c:128:6:SbW_TxCPLt	1
+../Drivers/SbW_Protocol/SbW_Protocol.c:97:6:SbW_Reply_Transmit	1
+../Drivers/SbW_Protocol/SbW_Protocol.c:101:6:SbW_Timer_Callback	1
+../Drivers/SbW_Protocol/SbW_Protocol.c:109:6:SbW_TxFrame_processor	4
+../Drivers/SbW_Protocol/SbW_Protocol.c:122:6:SbW_TxCPLt	1

@@ -20,67 +20,61 @@ static uint16_t CRC16(uint8_t *data, uint16_t len) {
 void SbW_Init(SbW_Protocol_t *S) {
 	S->MessageFifo.Fifo_Size = S->Fifo_Buffer_Size / S->Frame_Len;
 	fifo_init(&S->MessageFifo);
-	S->Mutex = 0;
+	S->Mutex = 0; //ensures that the Mutex flag starts in the unlocked state (0)
 }
 
 void SbW_Request_Received_CB(SbW_Protocol_t *S, uint8_t *data, uint16_t len) {
 	uint8_t NoReply = 0;
 	uint16_t CRC_Result = CRC16(data, len - 2);
-
 	if (S->RemainingFrames) {
 		return;
 	}
-	//check the data integrity
+	// Check the data integrity
 	if (CRC_Result
 			!= (((uint16_t) data[len - 1] << 8) | (uint16_t) data[len - 2])) {
-		//CRC Error
 		S->HW_Interface_t.User_Callback(SbW_ERROR_CRC);
-		//return CRC_Result; //ignoring this frame
+		// SbW_ERROR_CRC // Ignoring this frame
 	}
-	//NoError
+	// SbW_ERROR_NoERROR
 	S->R_W = data[1] >> 7;
 	S->CMD = data[1] & 0b01111111;
 
 	switch (S->CMD) {
-	case 0x01: //1st command Get/Set Sampling Frequency
+	case 0x01: // Get or Set Sampling Frequency
 		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
-		if (S->R_W) //Read
-		{
+		if (S->R_W) {
 			len = 7;
-			data[2] = 2; //data length =2
+			data[2] = 2; // data length =2
 			data[3] = (uint8_t) (S->SamplingFreq >> 8);
 			data[4] = (uint8_t) S->SamplingFreq;
-		} else //Write
-		{
+		} else {
 			len = 5;
 			S->SamplingFreq = ((uint16_t) data[3] << 8) | (uint16_t) data[4];
 			data[2] = 0;
 		}
-		//send back the reply to the PC
-		//S->HW_Interface_t.Send_Reply(data, len);
 		break;
-	case 0x02:		//2nd command Get/Set Frame Length
+
+	case 0x02: // Get or Set Frame Length
 		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
-		if (S->R_W) //Read
-		{
+		if (S->R_W) {
 			len = 6;
-			data[2] = 1; //data length =1
-			data[3] = S->Frame_Len; //Get Frame Length
-			//data[4]|data[5] for CRC_Result
+			data[2] = 1; // data length =1
+			data[3] = S->Frame_Len; // Get Frame Length
+			// data[4]|data[5] for CRC_Result
 		}
 		break;
 
-		//get frames from the frame buffer
-	case 0x04:
+	case 0x04: // Get Frames from the frame buffer
+		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
 		if (!S->R_W) {
-			NoReply = 1; //means do not issue a standard reply
+			NoReply = 1; // means do not issue a standard reply
 			S->RemainingFrames = data[3];
-			//SbW_TxFrame_processor(S);
+			// SbW_TxFrame_processor(S);
 		}
 		break;
 
-		//get the frame buffer depth
-	case 0x6:
+	case 0x06: // Get the frame buffer depth
+		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
 		if (S->R_W) {
 			len = 7;
 			uint16_t FrameBufferDepth = S->Fifo_Buffer_Size / S->Frame_Len;
