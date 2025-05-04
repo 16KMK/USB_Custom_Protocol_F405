@@ -54,9 +54,17 @@ void SbW_Request_Received_CB(SbW_Protocol_t *S, uint8_t *data, uint16_t len);
 // Reply to the controller from the protocol
 void SbW_Reply_Transmit(SbW_Protocol_t *S, uint8_t *data, uint16_t len);
 
-// To be called from the timer ISR, inside, the data will be enqueued inside the FIFO
+
+// To be called from the timer ISR (HAL_TIM_PeriodElapsedCallback)
+// Inside it the data will be enqueued inside the FIFO
+// Enqueues the current frame (from FrameDataBaseAddress) into a FIFO buffer.
+// Calls the transmission processor to try sending it.
 void SbW_Timer_Callback(SbW_Protocol_t *S);
 
-void SbW_TxCPLt(SbW_Protocol_t *S);
+// Transmit the next message in the FIFO, if conditions are allowed
 void SbW_TxFrame_processor(SbW_Protocol_t *S);
+
+// Called when a transmission is complete
+// This allows continuous streaming of frames from the FIFO as each one completes
+void SbW_TxCPLt(SbW_Protocol_t *S);
 #endif /* SbW_PROTOCOL_SbW_PROTOCOL_H_ */

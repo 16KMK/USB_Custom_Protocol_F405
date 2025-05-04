@@ -15,7 +15,7 @@ typedef struct {
 	float Vd;
 	float Vq;
 	float T;
-	uint8_t G[4];
+	uint8_t G[4];//??
 } DataFrame;
 
 extern SbW_Protocol_t S;

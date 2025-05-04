@@ -59,6 +59,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 USB_Custom_Protocol_F405.list \
 
+OBJCOPY_HEX += \
+USB_Custom_Protocol_F405.hex \
+
 
 # All Target
 all: main-build
@@ -82,12 +85,17 @@ USB_Custom_Protocol_F405.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_T
 	@echo 'Finished building: $@'
 	@echo ' '
 
+USB_Custom_Protocol_F405.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "USB_Custom_Protocol_F405.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) USB_Custom_Protocol_F405.elf USB_Custom_Protocol_F405.list USB_Custom_Protocol_F405.map default.size.stdout
+	-$(RM) USB_Custom_Protocol_F405.elf USB_Custom_Protocol_F405.hex USB_Custom_Protocol_F405.list USB_Custom_Protocol_F405.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

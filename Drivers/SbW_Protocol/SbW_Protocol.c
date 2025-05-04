@@ -99,10 +99,13 @@ void SbW_Reply_Transmit(SbW_Protocol_t *S, uint8_t *data, uint16_t len) {
 }
 
 void SbW_Timer_Callback(SbW_Protocol_t *S) {
+
 	int16_t Head = fifo_enqueue(&S->MessageFifo);
-	//implement the enqueue operation
+	// Implement the enqueue operation
+
 	memcpy(S->Fifo_Buffer + (Head * S->Frame_Len), S->FrameDataBaseAddress,
 			S->Frame_Len);
+
 	SbW_TxFrame_processor(S);
 }
 

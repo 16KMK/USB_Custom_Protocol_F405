@@ -58,11 +58,13 @@ SbW_Protocol_t S = {
 		.Frame_Len = Def_Frame_Len,
 		.HW_Interface_t = {
 							.Send_Reply = SbW_Protocol_Reply,
-							.User_Callback = App_User_Callback },
+							.User_Callback = App_User_Callback
+		                  },
 		.Fifo_Buffer = FrameBuffer,
 		.Fifo_Buffer_Size = sizeof(FrameBuffer),
 		.FrameDataBaseAddress = (uint8_t*) &F,
-		.P_TXBuffer = TxBuffer
+		.P_TXBuffer = TxBuffer,
+		.RemainingFrames=0
 };
 
 extern uint8_t RxBuffer[];
@@ -113,6 +115,23 @@ int main(void)
   MX_USB_DEVICE_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  uint8_t test_frames[3][Def_Frame_Len] = {
+      {0xA1, 0xB1, 0xC1, 0xD1},
+      {0xA2, 0xB2, 0xC2, 0xD2},
+      {0xA3, 0xB3, 0xC3, 0xD3}
+  };
+
+  // Initialize the FIFO before using
+  fifo_init(&S.MessageFifo);
+
+  // Load and send test frames
+  for (int i = 0; i < 3; i++) {
+      // Copy test frame to the FrameDataBaseAddress
+      memcpy(S.FrameDataBaseAddress, test_frames[i], Def_Frame_Len);
+
+      // Simulate periodic callback that queues the frame
+      SbW_Timer_Callback(&S);
+  }
 
   /* USER CODE END 2 */
 
