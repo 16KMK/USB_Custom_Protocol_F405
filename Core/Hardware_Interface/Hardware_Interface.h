@@ -9,18 +9,24 @@
 
 #define TxRxBufferSize 256
 
-typedef struct {
+typedef struct{
 	float Id;
 	float Iq;
 	float Vd;
 	float Vq;
 	float T;
-	uint8_t G[4];//??
+	uint8_t G[4]; //??
 } DataFrame;
 
 extern SbW_Protocol_t S;
 
+// Transmit data to PC over USB CDC
 void SbW_Protocol_Reply(uint8_t *data, uint16_t len);
+
+//To notify the application layer
 void App_User_Callback(SbW_Err_Codes_t Error_Code);
+
+//Sampling timer callback
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
 #endif /* HARDWARE_INTERFACE_HARDWARE_INTERFACE_H_ */

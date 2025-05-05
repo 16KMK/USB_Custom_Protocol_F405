@@ -54,7 +54,6 @@ void SbW_Request_Received_CB(SbW_Protocol_t *S, uint8_t *data, uint16_t len);
 // Reply to the controller from the protocol
 void SbW_Reply_Transmit(SbW_Protocol_t *S, uint8_t *data, uint16_t len);
 
-
 // To be called from the timer ISR (HAL_TIM_PeriodElapsedCallback)
 // Inside it the data will be enqueued inside the FIFO
 // Enqueues the current frame (from FrameDataBaseAddress) into a FIFO buffer.
