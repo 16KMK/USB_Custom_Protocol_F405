@@ -42,31 +42,51 @@ void SbW_Request_Received_CB(SbW_Protocol_t *S, uint8_t *data, uint16_t len) {
 	switch (S->CMD) {
 	case 0x01: // Get or Set Sampling Frequency
 		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
-		if (S->R_W) {
+		if (S->R_W) { // Get Request (ECU -> PC)
 			len = 7;
-			data[2] = 2; // data length =2
+			data[2] = 2; // Number of Data Bytes =2
 			data[3] = (uint8_t) (S->SamplingFreq >> 8);
 			data[4] = (uint8_t) S->SamplingFreq;
-		} else {
+			// data[5] | data[6] for CRC_Result
+		} else { // Set Request (ECU -> PC)
 			len = 5;
 			S->SamplingFreq = ((uint16_t) data[3] << 8) | (uint16_t) data[4];
-			data[2] = 0;
+			data[2] = 0; // Number of Data Bytes =0
+			// data[3] | data[4] for CRC_Result
 		}
 		break;
 
 	case 0x02: // Get or Set Frame Length
 		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
-		if (S->R_W) {
+		if (S->R_W) { // Get Request (ECU -> PC)
 			len = 6;
-			data[2] = 1; // data length =1
-			data[3] = S->Frame_Len; // Get Frame Length
-			// data[4]|data[5] for CRC_Result
+			data[2] = 1; // Number of Data Bytes =1
+			data[3] = S->Frame_Len; // Get Frame_Len
+			// data[4] | data[5] for CRC_Result
+		} else { // Set Request (ECU -> PC)
+			len = 5;
+			S->Frame_Len = data[3]; // Set Frame_Len
+			data[2] = 0; // Number of Data Bytes =0
+			// data[3] | data[4] for CRC_Result
 		}
 		break;
-
-	case 0x04: // Get Frames from the frame buffer
+	case 0x03: // Get or Set Stream ON
 		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
-		if (!S->R_W) {
+		if (S->R_W) { // Get Request (ECU -> PC)
+			len = 6;
+			data[2] = 1; // Number of Data Bytes =1
+			data[3] = S->Stream_ON; // Get Stream_ON
+			// data[4] | data[5] for CRC_Result
+		} else { // Set Request (ECU -> PC)
+			len = 5;
+			S->Stream_ON = data[3]; // Set Stream_ON
+			data[2] = 0; // Number of Data Bytes =0
+			// data[3] | data[4] for CRC_Result
+		}
+		break;
+	case 0x04: // Get number of frames to be reported by the controller
+		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
+		if (!S->R_W) { // ??
 			NoReply = 1; // means do not issue a standard reply
 			S->RemainingFrames = data[3];
 			// SbW_TxFrame_processor(S);
@@ -75,7 +95,7 @@ void SbW_Request_Received_CB(SbW_Protocol_t *S, uint8_t *data, uint16_t len) {
 
 	case 0x06: // Get the frame buffer depth
 		S->HW_Interface_t.User_Callback(SbW_ERROR_NoERROR);
-		if (S->R_W) {
+		if (S->R_W) { // Get Request (ECU -> PC)
 			len = 7;
 			uint16_t FrameBufferDepth = S->Fifo_Buffer_Size / S->Frame_Len;
 			data[3] = (uint8_t) (FrameBufferDepth >> 8);
