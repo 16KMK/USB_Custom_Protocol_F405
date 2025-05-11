@@ -16,5 +16,5 @@ void App_User_Callback(SbW_Err_Codes_t Error_Code) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	F.G[0]++;
-	SbW_Timer_Callback(&S);
+	//SbW_Timer_Callback(&S);
 }
