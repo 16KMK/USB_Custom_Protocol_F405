@@ -47,7 +47,17 @@ TIM_HandleTypeDef htim1;
 /* USER CODE BEGIN PV */
 extern uint8_t TxBuffer[];
 
-DataFrame F;
+DataFrame F = {
+		.Id = 1.25f,
+		.Iq = 345.0f,
+		.Vd = 10.1f,
+		.Vq = 30.555f,
+		.T = 12.56f,
+		.M = 100,
+		.K = 10,
+		.G = {78,4,5,5,90,66,45,77},
+
+};
 
 #define Def_Frame_Len sizeof(DataFrame)
 #define FIFO_Depth 50

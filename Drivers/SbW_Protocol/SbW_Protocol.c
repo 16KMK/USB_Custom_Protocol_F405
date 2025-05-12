@@ -126,8 +126,8 @@ void SbW_Timer_Callback(SbW_Protocol_t *S) {
 
 		memcpy(S->Fifo_Buffer + (Head * S->Frame_Len), S->FrameDataBaseAddress,
 				S->Frame_Len);
-		SbW_TxFrame_processor(S);
 		S->Mutex = 0;
+		SbW_TxFrame_processor(S);
 	}
 }
 
